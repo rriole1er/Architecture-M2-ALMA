@@ -70,8 +70,21 @@ Architecture MiniNetArch of MiniNetFamily = {
     };
 
     Component Storage = {
-        Port read : Provided;
-        Port write : Provided;
+        -- Ports dédiés pour AuthService
+        Port readForAuth  : Provided;
+        Port writeForAuth : Provided;
+
+        -- Ports dédiés pour UserService
+        Port readForUser  : Provided;
+        Port writeForUser : Provided;
+
+        -- Ports dédiés pour PostService
+        Port readForPost  : Provided;
+        Port writeForPost : Provided;
+
+        -- Ports dédiés pour MessageService
+        Port readForMsg   : Provided;
+        Port writeForMsg  : Provided;
     };
 
     -- ===============================
@@ -124,32 +137,35 @@ Architecture MiniNetArch of MiniNetFamily = {
         -- ===============================
 
         -- AuthService
-        AuthService.storageRead   to Data_Auth.readRole;
-        Storage.read              to Data_Auth.writeRole;
+        AuthService.storageRead     to Data_Auth.readRole;
+        Data_Auth.writeRole         to Storage.readForAuth;
 
-        AuthService.storageWrite  to Data_Auth.writeRole;
-        Storage.write             to Data_Auth.readRole;
+        AuthService.storageWrite    to Data_Auth.writeRole;
+        Data_Auth.readRole          to Storage.writeForAuth;
+
 
         -- UserService
-        UserService.storageRead   to Data_User.readRole;
-        Storage.read              to Data_User.writeRole;
+        UserService.storageRead     to Data_User.readRole;
+        Data_User.writeRole         to Storage.readForUser;
 
-        UserService.storageWrite  to Data_User.writeRole;
-        Storage.write             to Data_User.readRole;
+        UserService.storageWrite    to Data_User.writeRole;
+        Data_User.readRole          to Storage.writeForUser;
+
 
         -- PostService
-        PostService.storageRead   to Data_Post.readRole;
-        Storage.read              to Data_Post.writeRole;
+        PostService.storageRead     to Data_Post.readRole;
+        Data_Post.writeRole         to Storage.readForPost;
 
-        PostService.storageWrite  to Data_Post.writeRole;
-        Storage.write             to Data_Post.readRole;
+        PostService.storageWrite    to Data_Post.writeRole;
+        Data_Post.readRole          to Storage.writeForPost;
+
 
         -- MessageService
-        MessageService.storageRead   to Data_Message.readRole;
-        Storage.read                 to Data_Message.writeRole;
+        MessageService.storageRead  to Data_Message.readRole;
+        Data_Message.writeRole      to Storage.readForMsg;
 
-        MessageService.storageWrite  to Data_Message.writeRole;
-        Storage.write                to Data_Message.readRole;
+        MessageService.storageWrite to Data_Message.writeRole;
+        Data_Message.readRole       to Storage.writeForMsg;
     };
 
 };
