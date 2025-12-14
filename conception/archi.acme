@@ -1,0 +1,167 @@
+Family MiniNetFamily = {
+
+    ComponentType ServiceType = {
+        PortType Provided = { }
+        PortType Required = { }
+    }
+
+    ConnectorType RPC = {
+        Role caller;
+        Role callee;
+    }
+
+    ConnectorType DataAccess = {
+        Role readRole;     -- lecture depuis le service
+        Role writeRole;    -- écriture depuis le service
+    }
+};
+
+
+Architecture MiniNetArch of MiniNetFamily = {
+
+    -- ============================================
+    -- Composants
+    -- ============================================
+
+    Component UI : ServiceType = {
+        Port authRequest  : Required;
+        Port authResponse : Provided;
+
+        Port userQuery     : Required;
+        Port friendCommand : Required;
+
+        Port createPost : Required;
+        Port feedRequest : Required;
+
+        Port sendMessage : Required;
+        Port inboxRequest : Required;
+    };
+
+    Component AuthService : ServiceType = {
+        Port authRequest     : Provided;
+        Port authResponse    : Required;
+        Port storageRead     : Required;
+        Port storageWrite    : Required;
+    };
+
+    Component UserService : ServiceType = {
+        Port userQuery       : Provided;
+        Port friendCommand   : Provided;
+        Port storageRead     : Required;
+        Port storageWrite    : Required;
+    };
+
+    Component PostService : ServiceType = {
+        Port createPost   : Provided;
+        Port feedRequest  : Provided;
+        Port storageRead  : Required;
+        Port storageWrite : Required;
+    };
+
+    Component MessageService : ServiceType = {
+        Port sendMessage  : Provided;
+        Port inboxRequest : Provided;
+        Port storageRead  : Required;
+        Port storageWrite : Required;
+    };
+
+    Component Storage = {
+
+        -- Ports spécifiques à chaque service
+        Port readForAuth   : Provided;
+        Port writeForAuth  : Provided;
+
+        Port readForUser   : Provided;
+        Port writeForUser  : Provided;
+
+        Port readForPost   : Provided;
+        Port writeForPost  : Provided;
+
+        Port readForMsg    : Provided;
+        Port writeForMsg   : Provided;
+    };
+
+
+    -- ============================================
+    -- Connecteurs
+    -- ============================================
+
+    Connector RPC_Auth    : RPC;
+    Connector RPC_User    : RPC;
+    Connector RPC_Post    : RPC;
+    Connector RPC_Message : RPC;
+
+    Connector Data_Auth    : DataAccess;
+    Connector Data_User    : DataAccess;
+    Connector Data_Post    : DataAccess;
+    Connector Data_Message : DataAccess;
+
+
+    -- ============================================
+    -- Attachements (UI → Services)
+    -- ============================================
+
+    Attachments {
+
+        UI.authRequest       to RPC_Auth.caller;
+        AuthService.authRequest to RPC_Auth.callee;
+
+        UI.authResponse      to RPC_Auth.caller;
+        RPC_Auth.callee      to AuthService.authResponse;
+
+        UI.userQuery         to RPC_User.caller;
+        UserService.userQuery to RPC_User.callee;
+
+        UI.friendCommand     to RPC_User.caller;
+        RPC_User.callee      to UserService.friendCommand;
+
+        UI.createPost        to RPC_Post.caller;
+        PostService.createPost to RPC_Post.callee;
+
+        UI.feedRequest       to RPC_Post.caller;
+        RPC_Post.callee      to PostService.feedRequest;
+
+        UI.sendMessage       to RPC_Message.caller;
+        MessageService.sendMessage to RPC_Message.callee;
+
+        UI.inboxRequest      to RPC_Message.caller;
+        RPC_Message.callee   to MessageService.inboxRequest;
+
+
+    -- ============================================
+    -- Attachements (Services → Storage)
+    -- ============================================
+
+        -- AuthService
+        AuthService.storageRead  to Data_Auth.readRole;
+        Data_Auth.writeRole      to Storage.readForAuth;
+
+        AuthService.storageWrite to Data_Auth.writeRole;
+        Data_Auth.readRole       to Storage.writeForAuth;
+
+
+        -- UserService
+        UserService.storageRead  to Data_User.readRole;
+        Data_User.writeRole      to Storage.readForUser;
+
+        UserService.storageWrite to Data_User.writeRole;
+        Data_User.readRole       to Storage.writeForUser;
+
+
+        -- PostService
+        PostService.storageRead  to Data_Post.readRole;
+        Data_Post.writeRole      to Storage.readForPost;
+
+        PostService.storageWrite to Data_Post.writeRole;
+        Data_Post.readRole       to Storage.writeForPost;
+
+
+        -- MessageService
+        MessageService.storageRead  to Data_Message.readRole;
+        Data_Message.writeRole      to Storage.readForMsg;
+
+        MessageService.storageWrite to Data_Message.writeRole;
+        Data_Message.readRole       to Storage.writeForMsg;
+    };
+
+};

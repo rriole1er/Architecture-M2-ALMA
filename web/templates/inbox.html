@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<h2>Derniers messages reçus</h2>
+
+{% if messages %}
+<!-- TO DO : message du user trié  -->
+
+{% for msg in messages|default(m) %}
+<div class="post">
+    <div class="post-meta" style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="meta-left">
+            <span class="post-author">{{ msg.sender }}</span> — {{ msg.timestamp }}
+        </div>
+        <a class="message-link" href="/conversation/{{ msg.sender }}" title="Ouvrir la conversation" aria-label="Ouvrir la conversation avec {{ msg.sender }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+        </a>
+    </div>
+    <div>{{ msg.content }}</div>
+</div>
+{% endfor %}
+
+{% else %}
+<p>Aucun message à afficher.</p>
+{% endif %}
+
+
+{% endblock %}

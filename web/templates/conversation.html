@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="display:flex;align-items:center;gap:10px;">
+    <a href="/inbox" aria-label="Retour" style="text-decoration:none;color:inherit;font-size:1.4rem;">&#8592;</a>
+    <h2 >Conversation avec {{ other_user }}</h2>
+</div>
+
+{% if conversation %}
+    {% for msg in conversation %}
+    <div class="post" style="background-color: {% if msg.sender == current_user %}#e0f7fa{% else %}#f1f8e9{% endif %};">
+        <div class="post-meta" style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="meta-left">
+                <span class="post-author">{{ msg.sender }}</span> — {{ msg.timestamp }}
+            </div>
+        </div>
+        <div>{{ msg.content }}</div>
+    </div>
+    {% endfor %}
+{% else %}
+<p>Aucun message dans cette conversation.</p>
+{% endif %}
+
+
+<h3>Envoyer un message</h3>
+<form method="post" action="/send_message">
+    <input type="hidden" name="to" value="{{ other_user }}">
+    <textarea name="text" placeholder="Votre message..."></textarea>
+    <button class="button-blue type="submit">Envoyer</button>
+</form>
+
+{% endblock %}

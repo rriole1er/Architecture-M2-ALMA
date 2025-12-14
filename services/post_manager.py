@@ -10,12 +10,23 @@ class PostManager:
     def __init__(self, storage: Storage):
         self.storage = storage
 
-    def postMessage(self, author: User, text=None, imageUrl=None, linkUrl=None):
+    def postMessage(self, author: User, text: str, imageUrl=None, linkUrl=None):
         post = Post(author, text, imageUrl, linkUrl)
         self.storage.save_post(post)
         return post
 
     def getFeed(self, user: User):
-        for p in self.storage.posts:
-            if p.author == user or p.author in user.friends:
-                print(f"[{p.timestamp}] {p.author.pseudo}: {p.text}")
+        all_posts = self.storage.posts or []
+        friends = getattr(user, "friends", []) or []
+        feed = [p for p in all_posts if p.author in friends or p.author == user]
+
+        try:
+            feed.sort(key=lambda p: p.timestamp, reverse=True)
+        except Exception:
+            pass
+
+        # ajouter un attribut d'affichage sans secondes pour les templates
+        for p in feed:
+            p.display_timestamp = p.timestamp.strftime("%Y-%m-%d %H:%M")
+
+        return feed

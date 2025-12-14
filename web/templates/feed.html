@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Fil d’actualité</h2>
+
+
+{% if posts %}
+{% for post in posts %}
+<div class="post">
+    <div class="post-author">{{ post.author.pseudo }}</div>
+    <div class="post-meta subtitle" style="color:#6c757d;font-size:0.9em;">{{ post.display_timestamp }}</div>
+    {% if post.text %}
+    <p>{{ post.text }}</p>
+    {% endif %}
+
+    {% if post.imageUrl %}
+    <div class="post-image">
+        <img src="{{ post.imageUrl }}" alt="image du post" style="max-width:35%; height:auto;">
+    </div>
+    {% endif %}
+
+    {% if post.linkUrl %}
+    <div class="post-link">
+        <a href="{{ post.linkUrl }}" target="_blank" rel="noopener">{{ post.linkUrl }}</a>
+    </div>
+    {% endif %}
+</div>
+{% endfor %}
+{% else %}
+<p>Aucun post à afficher.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form method="post" enctype="multipart/form-data">
+    <h2>Nouveau post</h2>
+    <textarea name="text" placeholder="Votre message..."></textarea>
+    <label>Choisir une image depuis l'ordinateur (optionnel)</label>
+    <input type="file" name="imageFile" accept="image/*">
+    <input type="text" name="imageUrl" placeholder="Ou URL de l'image (optionnel)">
+    <input type="text" name="linkUrl" placeholder="URL (optionnel)">
+    <button class="button-blue" type="submit">Publier</button>
+</form>
+
+{% endblock %}

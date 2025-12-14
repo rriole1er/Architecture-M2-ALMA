@@ -17,9 +17,27 @@ class MessageManager:
         return msg
 
     def getInbox(self, user: User):
+        messages = []
         for p in user.inbox:
-            print(f"[{p.timestamp}] {p.sender.pseudo}: {p.content}")
+            ts = p.timestamp.strftime("%H:%M")
+            messages.append({
+                "timestamp": ts,
+                "sender": p.sender.pseudo,
+                "content": p.content
+            })
+        return messages
 
-        #print(self.storage.messages,"here")
+    def getConversation(self, user1: User, user2: User):
+        conversation = []
+        for p in user1.inbox + user2.inbox:
+            if (p.sender == user1 and p.receiver == user2) or (p.sender == user2 and p.receiver == user1):
 
+                conversation.append({
+                    "timestamp": p.timestamp.strftime("%H:%M"),
+                    "sort_ts": p.timestamp,
+                    "sender": p.sender.pseudo,
+                    "content": p.content
+                })
+        conversation.sort(key=lambda x: x["sort_ts"])
 
+        return conversation
